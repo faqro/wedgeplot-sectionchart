@@ -3,19 +3,10 @@ var path = require('path')
 var im = require('sharp')
 var fs = require('fs')
 const { parse } = require("csv-parse")
+const config = require('../utils/config')
 
-//FILE AND IMAGE SETUP INFO
-const FILENAME = 'chart.png'
-const DOTFILENAME = 'dot.png'
-const ROOTPOS = [576, 756]
-const LEFTEXTREME = [120, 290]
-const RIGHTEXTREME = [1028, 299]
-const DOTSIZE = [9, 9]
-
-//DATA SETUP INFO
-const MAXMAGNITUDE = 12000
-const MINANG = 16
-const MAXANG = 12
+//SETUP INFO
+const { FILENAME, DOTSIZE, DOTFILENAME, ROOTPOS, LEFTEXTREME, RIGHTEXTREME, MAXMAGNITUDE, MINANG, MAXANG, LINESKIP, CSVFILENAME } = config
 
 const LEFTANGLE = Math.atan2(LEFTEXTREME[1] - ROOTPOS[1], LEFTEXTREME[0] - ROOTPOS[0])
 const RIGHTANGLE = Math.atan2(RIGHTEXTREME[1] - ROOTPOS[1], RIGHTEXTREME[0] - ROOTPOS[0])
@@ -34,17 +25,17 @@ const mapDot = (angleValue, magnitude) => {
 }
 
 const createVectorArray = (cb, failer) => {
-  const csvDir = path.dirname(__dirname) + '/uploads/readcsv.csv'
+  const csvDir = path.dirname(__dirname) + '/uploads/' + CSVFILENAME
 
   const scaledArray = []
 
   fs.createReadStream(csvDir)
-    .pipe(parse({ delimiter: ",", from_line: 2 }))
+    .pipe(parse({ delimiter: ",", from_line: LINESKIP }))
     .on("data", function (row) {
       scaledArray.push([((row[0] - MINANG) / (MAXANG - MINANG)), (row[1] / MAXMAGNITUDE)])
     })
     .on("end", function () {
-      console.log(scaledArray.length)
+      console.log(`Read ${scaledArray.length} datapoints from .csv file`)
       cb(scaledArray)
     })
     .on("error", function () {
