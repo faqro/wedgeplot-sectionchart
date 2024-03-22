@@ -11,7 +11,7 @@ const DOTFILENAME = 'dot.png'
 const ROOTPOS = [576, 756]
 const LEFTEXTREME = [120, 290]
 const RIGHTEXTREME = [1028, 299]
-const DOTSIZE = [9, 9]
+const DOTSIZE = [6, 6]
 
 //DATA SETUP INFO
 const MAXMAGNITUDE = 12000
